@@ -47,4 +47,5 @@
 
 ## What to do 
 1. Start the game, **MAKE SURE YOU AND THE OPPONENT ARE THE SAME CHARACTER**
-1. Start the tool, let it run, do a lot of moves, get hit, etc
+2. Start the tool, let it run, do a lot of moves, get hit, etc
+Do try to let moves go on as long as possible and avoid cancelling them early by moving or attacking again
