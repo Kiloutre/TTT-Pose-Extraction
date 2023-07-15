@@ -10,7 +10,7 @@
 5. If only a partial amount of frame from the move have been saved (many animations end earlier than their actual end), the animation will still be saved but partially:
     - Let us imagine a 50 frames move where frame 1-20 have been saved. A file 'X_20f.tttposes_partial' will be created, containing the first twenty frames of animations.
     - If later on, frame 21 - 30 are saved, A file 'X_30f.tttposes_partial' will be created, containing the first 30 frames of animations.
-    - PS: Moves that are 1 or 2 frames long or less will never be saved partially
+    - PS: Moves that are 1 or 2 frames long or less will never be saved partially. A move cannot be saved if it's 1st or 2nd frame are missing.
 
 
 ## What to do 
