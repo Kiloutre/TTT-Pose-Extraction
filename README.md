@@ -11,7 +11,10 @@
     - Let us imagine a 50 frames move where frame 1-20 have been saved. A file `X__20-50f.tttposes_partial` will be created, containing the first twenty frames of animations.
     - If later on, frame 21 - 30 for that same move are also saved, A file `X__30-50f.tttposes_partial` will be created, containing the first 30 frames of animations.
     - PS: Moves that are 1 or 2 frames long or less will never be saved partially. A move cannot be saved if it's 1st or 2nd frame are missing.
-
+6. Exported files are stored in binary format, here are their content:
+    - First 4 bytes are magic bytes for identification purposes
+    - Next 4 bytes store the amount of frames the "animation" has (little endian)
+    - Next: sizeof(float) * 24 * 3 * ANIMATION_DURATION (little endian)
 
 ## What to do 
 1. Start the game, **MAKE SURE YOU AND THE OPPONENT ARE THE SAME CHARACTER**
