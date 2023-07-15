@@ -171,38 +171,53 @@ void Game::OnNewMove(Player& player)
 
 void Game::SaveAnim(Player& player, unsigned int max_frame, bool partial_anim)
 {
-	if (!partial_anim) {
-		player.m_animations.extracted.insert(player.m_currentAnimationId);
-	}
+	std::string anim_folder = EXTRACTION_FOLDER;
+	anim_folder += "P" + std::to_string(player.id + 1) + "/";
 
+
+	DeleteIfPartialAnimExists(anim_folder, player.m_currentAnimationId);
 
 	// write to file
 	{
 		CreateDirectoryA(EXTRACTION_FOLDER, nullptr);
+		CreateDirectoryA(anim_folder.c_str(), nullptr);
 
-		std::string filename = EXTRACTION_FOLDER;
-		filename += "P" + std::to_string(player.id + 1) + "/" + std::to_string(player.m_currentAnimationId) + (partial_anim ? ".tttposes_partial" : ".tttposes");
+		std::string filename = anim_folder + std::to_string(player.m_currentAnimationId);
+
+		if (partial_anim) {
+			filename += "__" + std::to_string(max_frame) + "-" + std::to_string(player.m_animations.current->max_frame)  + "f.tttposes_partial";
+			printf("%s\n", filename.c_str());
+		}
+		else {
+			filename += ".tttposes";
+		}
 
 		std::ofstream anim_file(filename, std::ios::binary);
-		anim_file << "TTTP";
-		anim_file.write((const char*)&max_frame, 4);
 
-		for (unsigned int frame = 1; frame <= max_frame; ++frame)
+		if (anim_file.fail()) {
+			printf("!! Failed to create output file '%s' !!\n", filename.c_str());
+		}
+		else
 		{
-			for (auto value : player.m_animations.current->keyframes[frame])
+			anim_file << "TTTP";
+			anim_file.write((const char*)&max_frame, 4);
+
+			for (unsigned int frame = 1; frame <= max_frame; ++frame)
 			{
-				anim_file.write((const char*)&value, 4);
+				for (auto value : player.m_animations.current->keyframes[frame])
+				{
+					anim_file.write((const char*)&value, 4);
+				}
 			}
 		}
 	}
 
-
 	if (!partial_anim)
 	{
 		printf("(P%u) %u: Finished!\n", player.id, player.m_currentAnimationId);
-		std::string anim_folder = EXTRACTION_FOLDER;
-		anim_folder += "P" + std::to_string(player.id + 1) + "/";
-		DeleteIfPartialAnimExists(anim_folder, player.m_currentAnimationId);
+		player.m_animations.pool.erase(player.m_currentAnimationId);
+		player.m_mustExtract = false;
+		player.m_animations.extracted.insert(player.m_currentAnimationId);
 	}
 	else {
 		printf("(P%u) %u: Saving partial anim (%u frames)\n", player.id, player.m_currentAnimationId, max_frame);
@@ -228,14 +243,14 @@ void Game::SaveCurrentKeyframe(Player& player)
 		// Securities
 		unsigned int currentFrame = readUInt32(BASE_ADDRESS + 0x8796FC + PLAYER_OFFSET * player.id);
 		if (player.m_currentFrame != currentFrame) {
-			printf("(P%u) !!!! m_currentFrame != currentFrame !!!! (%u vs %u)", player.id, player.m_currentFrame, currentFrame);
+			printf("(P%u) !!!! m_currentFrame != currentFrame !!!! (%u vs %u)\n", player.id, player.m_currentFrame, currentFrame);
 			// Ensure that the current frame hasn't changed to validate the data we obtained (if the game happens to advance its frame counter during our reading)
 			return;
 		}
 
 		unsigned int currentAnimationId = readUInt16(BASE_ADDRESS + 0x87974C + PLAYER_OFFSET * player.id);
 		if (player.m_currentAnimationId != currentAnimationId) {
-			printf("(P%u) !!!! m_currentAnimationId != currentAnimationId !!!! (%u vs %u)", player.id, player.m_currentAnimationId, currentAnimationId);
+			printf("(P%u) !!!! m_currentAnimationId != currentAnimationId !!!! (%u vs %u)\n", player.id, player.m_currentAnimationId, currentAnimationId);
 			// Ensure that the current move hasn't changed to validate the data we obtained (if the game happens to change move during our reading)
 			return;
 		}

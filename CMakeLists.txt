@@ -11,5 +11,8 @@ endif()
 
 project ("TTT_AnimExtraction")
 
-# Incluez les sous-projets.
-add_subdirectory ("TTT_AnimExtraction")
+add_executable (TTT_AnimExtraction "TTT_AnimExtraction.cpp" "Utils.cpp")
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET TTT_AnimExtraction PROPERTY CXX_STANDARD 20)
+endif()
