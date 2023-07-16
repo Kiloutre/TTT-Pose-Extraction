@@ -3,7 +3,8 @@
 typedef uint64_t gameAddr;
 const unsigned int PLAYER_COUNT = 1;
 const gameAddr BASE_ADDRESS = 0x20000000;
-const gameAddr PLAYER_OFFSET = 0x0; // Size of the player structure, distance between two players
+const gameAddr PLAYER_OFFSET = 0xB8A0; // Size of the player structure, distance between two players
+const gameAddr MOVESET_ID = 0x884F08; // Which moveset to load
 const char* EXTRACTION_FOLDER = "TTT_Poses/"; // Must end with /
 
 // Each of these is an address to 3x floats
